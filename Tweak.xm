@@ -11,7 +11,7 @@
 
   UIImage *maskImg = [UIImage imageWithData:UIImageJPEGRepresentation([self _iconBasicOverlayImage], 1)];
 
-  CGImageRef maskRef = maskImg.CGImage; 
+  CGImageRef maskRef = maskImg.CGImage;
   CGImageRef mask = CGImageMaskCreate(CGImageGetWidth(maskRef), CGImageGetHeight(maskRef), CGImageGetBitsPerComponent(maskRef), CGImageGetBitsPerPixel(maskRef), CGImageGetBytesPerRow(maskRef), CGImageGetDataProvider(maskRef), NULL, false);
   CGImageRef masked = CGImageCreateWithMask([img CGImage], mask);
 
