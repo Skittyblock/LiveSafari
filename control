@@ -1,6 +1,6 @@
 Package: xyz.skitty.livesafari
 Name: LiveSafari
-Depends: mobilesubstrate
+Depends: mobilesubstrate, com.muirey03.libimagepicker
 Version: 1.0
 Architecture: iphoneos-arm
 Description: Make Safari's icon point north

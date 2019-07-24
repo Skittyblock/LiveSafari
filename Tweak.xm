@@ -3,11 +3,33 @@
 
 #import "Tweak.h"
 
+BOOL tweakEnabled;
+BOOL customBackgroundEnabled;
+BOOL customNeedleEnabled;
+float needleMultiplier;
+
+NSDictionary *prefs;
+
+static void loadPrefs() {
+  prefs = [NSDictionary dictionaryWithContentsOfFile:@"/var/mobile/Library/Preferences/xyz.skitty.livesafari.plist"];
+  
+  tweakEnabled = [prefs objectForKey:@"enabled"] ? [[prefs objectForKey:@"enabled"] boolValue] : YES;
+  customNeedleEnabled = [[prefs objectForKey:@"customNeedleEnabled"] boolValue];
+  customBackgroundEnabled = [[prefs objectForKey:@"customBackgroundEnabled"] boolValue];
+  needleMultiplier = [prefs objectForKey:@"needleMultiplier"] ? [[prefs objectForKey:@"needleMultiplier"] floatValue] : 1.0;
+}
+
 %subclass SBSafariIconImageView : SBLiveIconImageView
 %property (nonatomic, retain) CLLocationManager *locationManager;
 %property (nonatomic, retain) UIImageView *needle;
 - (UIImage *)contentsImage {
-  UIImage *img = [UIImage imageWithContentsOfFile:@"/Library/Application Support/LiveSafari/background.png"];
+  UIImage *img = nil;
+  
+  if(customBackgroundEnabled)
+    img = [UIImage imageWithData:[prefs objectForKey:@"customCompassBackground"]];
+
+  if(!img)
+    img = [UIImage imageWithContentsOfFile:@"/Library/Application Support/LiveSafari/background.png"];
 
   UIImage *maskImg = [UIImage imageWithData:UIImageJPEGRepresentation([self _iconBasicOverlayImage], 1)];
 
@@ -21,9 +43,25 @@
   %orig;
 
   if (!self.needle) {
+    UIImage *needleImage = nil;
+    
+    if(customNeedleEnabled)
+      needleImage = [UIImage imageWithData:[prefs objectForKey:@"customNeedle"]];
+    
+    if(!needleImage)
+      needleImage = [UIImage imageWithContentsOfFile:@"/Library/Application Support/LiveSafari/needle.png"];
+    
     self.needle = [[UIImageView
- alloc] initWithImage:[UIImage imageWithContentsOfFile:@"/Library/Application Support/LiveSafari/needle.png"]];
+ alloc] initWithImage:needleImage];
     [self.needle setCenter:self.center];
+    
+    if(customNeedleEnabled) {
+      CGRect newFrame = self.needle.bounds;
+      newFrame.size.height *= needleMultiplier;
+      newFrame.size.width *= needleMultiplier;
+      [self.needle setBounds:newFrame];
+    } 
+    
     [self addSubview:self.needle];
 
     self.locationManager = [[CLLocationManager alloc] init];
@@ -71,3 +109,12 @@
   return %orig;
 }
 %end
+
+%ctor {
+  loadPrefs();
+
+  if(!tweakEnabled)
+    return;
+
+  %init;
+}
