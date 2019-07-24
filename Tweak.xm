@@ -55,10 +55,12 @@ static void loadPrefs() {
  alloc] initWithImage:needleImage];
     [self.needle setCenter:self.center];
     
-    CGRect newFrame = self.needle.bounds;
-    newFrame.size.height *= needleMultiplier;
-    newFrame.size.width *= needleMultiplier;
-    [self.needle setBounds:newFrame]; 
+    if(customNeedleEnabled) {
+      CGRect newFrame = self.needle.bounds;
+      newFrame.size.height *= needleMultiplier;
+      newFrame.size.width *= needleMultiplier;
+      [self.needle setBounds:newFrame];
+    } 
     
     [self addSubview:self.needle];
 
