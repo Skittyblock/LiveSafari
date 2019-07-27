@@ -1,7 +1,7 @@
 Package: xyz.skitty.livesafari
 Name: LiveSafari
 Depends: mobilesubstrate
-Version: 1.0
+Version: 1.0.1
 Architecture: iphoneos-arm
 Description: Make Safari's icon point north
 Icon: https://skitty.xyz/repo/icons/xyz.skitty.livesafari.png

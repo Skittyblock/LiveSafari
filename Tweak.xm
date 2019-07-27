@@ -9,7 +9,7 @@
 - (UIImage *)contentsImage {
   UIImage *img = [UIImage imageWithContentsOfFile:@"/Library/Application Support/LiveSafari/background.png"];
 
-  UIImage *maskImg = [UIImage imageWithData:UIImageJPEGRepresentation([self _iconBasicOverlayImage], 1)];
+  UIImage *maskImg = [UIImage imageWithData:UIImageJPEGRepresentation([self _currentOverlayImage], 1)];
 
   CGImageRef maskRef = maskImg.CGImage;
   CGImageRef mask = CGImageMaskCreate(CGImageGetWidth(maskRef), CGImageGetHeight(maskRef), CGImageGetBitsPerComponent(maskRef), CGImageGetBitsPerPixel(maskRef), CGImageGetBytesPerRow(maskRef), CGImageGetDataProvider(maskRef), NULL, false);
