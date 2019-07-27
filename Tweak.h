@@ -7,7 +7,7 @@
 @end
 
 @interface SBIconImageView : UIView
-- (id)_iconBasicOverlayImage;
+- (id)_currentOverlayImage;
 @end
 
 @interface SBLiveIconImageView : SBIconImageView
