@@ -8,16 +8,36 @@
 %property (nonatomic, retain) CLLocationManager *locationManager;
 %property (nonatomic, retain) UIImageView *needle;
 
+- (UIImage *)squareContentsImage {
+	return [UIImage imageWithContentsOfFile:@"/Library/Application Support/LiveSafari/background.png"];
+}
+
 - (UIImage *)contentsImage {
-	UIImage *img = [UIImage imageWithContentsOfFile:@"/Library/Application Support/LiveSafari/background.png"];
+	UIImage *image = [UIImage imageWithContentsOfFile:@"/Library/Application Support/LiveSafari/background.png"];
 
-	UIImage *maskImg = [UIImage imageWithData:UIImageJPEGRepresentation([self _currentOverlayImage], 1)];
+	if ([self respondsToSelector:@selector(_currentOverlayImage)]) {
+		UIImage *maskImg = [UIImage imageWithData:UIImageJPEGRepresentation([self _currentOverlayImage], 1)];
 
-	CGImageRef maskRef = maskImg.CGImage;
-	CGImageRef mask = CGImageMaskCreate(CGImageGetWidth(maskRef), CGImageGetHeight(maskRef), CGImageGetBitsPerComponent(maskRef), CGImageGetBitsPerPixel(maskRef), CGImageGetBytesPerRow(maskRef), CGImageGetDataProvider(maskRef), NULL, false);
-	CGImageRef masked = CGImageCreateWithMask([img CGImage], mask);
+		CGImageRef maskRef = maskImg.CGImage;
+		CGImageRef mask = CGImageMaskCreate(CGImageGetWidth(maskRef), CGImageGetHeight(maskRef), CGImageGetBitsPerComponent(maskRef), CGImageGetBitsPerPixel(maskRef), CGImageGetBytesPerRow(maskRef), CGImageGetDataProvider(maskRef), NULL, false);
+		CGImageRef masked = CGImageCreateWithMask(image.CGImage, mask);
 
-	return [UIImage imageWithCGImage:masked];
+		return [UIImage imageWithCGImage:masked];
+	}
+
+	CALayer *imageLayer = [CALayer layer];
+	imageLayer.frame = CGRectMake(0, 0, image.size.width, image.size.height);
+	imageLayer.contents = (id)image.CGImage;
+
+	imageLayer.masksToBounds = YES;
+	imageLayer.cornerRadius = self.continuousCornerRadius;
+
+	UIGraphicsBeginImageContextWithOptions(self.bounds.size, NO, 2.0);
+	[imageLayer renderInContext:UIGraphicsGetCurrentContext()];
+	UIImage *roundedImage = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+
+	return roundedImage;
 }
 
 - (void)setIcon:(id)arg1 location:(long long)arg2 animated:(BOOL)arg3 {

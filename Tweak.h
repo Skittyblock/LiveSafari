@@ -7,7 +7,9 @@
 @end
 
 @interface SBIconImageView : UIView
-- (id)_currentOverlayImage;
+@property (nonatomic, readonly) double continuousCornerRadius; 
+- (UIImage *)squareContentsImage;
+- (UIImage *)_currentOverlayImage; // removed in iOS 14
 @end
 
 @interface SBLiveIconImageView : SBIconImageView
